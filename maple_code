@@ -41,10 +41,29 @@ G := proc(a, n)
 	L__plus := degree(q__n_plus_1 + r__n);
 	L__min := degree(q__n_plus_1 - r__n);
 
+	if L__min = -infinity then
+		L__min := -1;
+	end if;
+
+	if L__plus = -infinity then
+		L__plus := -1;
+	end if;
+
 	if L__plus <= L__min then
 		k := degree(p__n) - L__min;
 	else 
-		ASSERT(false); 
+		temp := q__n_plus_1 + r__n;
+		a := coeff(temp, n, degree(temp));
+		temp := q__n_plus_1 - r__n;
+		b_temp := coeff(temp, n, degree(temp) - 1);
+
+		n2b_over_a := (-2 * b_temp) / a;
+		if type(n2b_over_a, integer) and n2b_over_a >= 0 then
+			k := degree(p__n) - L__plus + 1
+		else
+			k := max(degree(p__n) - L__plus + 1, n2b_over_a);
+		end if;
+		
 	end if;
 
 	if k < 0 then
@@ -54,7 +73,7 @@ G := proc(a, n)
 
 	f__n := 0;
 	for i from 0 to k do
-		f__n := f__n + b[i] * n ^ i
+		f__n := f__n + (b[i] * (n ^ i));
 	end do;
 
 	eqs := {};
