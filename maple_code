@@ -1,0 +1,77 @@
+G := proc(a, n)
+	if n=0 then
+		return 0;
+	end if;
+
+	a__n := a;
+	a__n_min_1 := subs(n=n-1, a);
+	ratio := simplify(normal(a__n / a__n_min_1));
+
+	if not type(ratio, ratpoly) then
+		return false;
+	end if;
+
+	p__n := 1;
+	q__n := numer(ratio);
+	r__n := denom(ratio);
+
+	r__n_plus_j := subs(n=n+j, r__n);
+	res := resultant(q__n, r__n_plus_j, n);
+	res_roots := roots(res, j);
+
+	for root_mult in res_roots do
+		root := op(1, root_mult);
+
+		r__n_plus_root := subs(n=n+root, r__n);
+
+		g__n := gcd(q__n, r__n_plus_root);
+		g__n_min_root := subs(n=n-root, g__n);
+
+		q__n := q__n / g__n;
+		r__n := r__n / g__n_min_root;
+
+		for i from 0 to root - 1 do
+			g__n_min_i := subs(n=n-i, g__n);
+			p__n := p__n * g__n_min_i;
+		end do;
+	end do;
+
+
+	q__n_plus_1 := subs(n=n+1, q__n);
+	L__plus := degree(q__n_plus_1 + r__n);
+	L__min := degree(q__n_plus_1 - r__n);
+
+	if L__plus <= L__min then
+		k := degree(p__n) - L__min;
+	else 
+		ASSERT(false); 
+	end if;
+
+	if k < 0 then
+		return false;
+	end if;
+
+
+	f__n := 0;
+	for i from 0 to k do
+		f__n := f__n + b[i] * n ^ i
+	end do;
+
+	eqs := {};
+	for i from 0 to k do
+		q__i_plus_1 := subs(n=i+1, q__n);
+		f__i := subs(n=i, f__n);
+		r__i := subs(n=i, r__n);
+		f__i_min_1 := subs(n=i-1, f__n);
+		p__i := subs(n=i, p__n);
+		eqs := eqs union {p__i = q__i_plus_1 * f__i - r__i * f__i_min_1};
+	end do;
+
+	sol_set := solve(eqs);
+	if sol_set = NULL then
+		return false;
+	end if;
+
+	sn := (q__n_plus_1 * f__n * a__n) / p__n;
+	return subs(sol_set, sn);
+end proc;
