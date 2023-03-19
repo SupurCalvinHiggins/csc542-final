@@ -1,5 +1,5 @@
 from sympy import Symbol, binomial
-from gosper import compute_bc
+from gosper import compute_bc, compute_pqr
 
 
 def test_compute_bc_poly():
@@ -33,3 +33,11 @@ def test_compute_bc_binom():
     b, c = compute_bc(a, k)
     assert b.equals(k - n)
     assert c.equals(k + 1)
+
+
+def test_compute_pqr_poly():
+    k = Symbol('k', integer=True)
+    b = k * (k + 3)
+    c = k + 1
+    p, q, r = compute_pqr(b, c)
+    assert p.equals()
