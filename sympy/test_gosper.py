@@ -1,5 +1,6 @@
-from sympy import Symbol, binomial, Integer, Rational
-from gosper import compute_bc, compute_pqr, degree_bound_f
+from sympy import Symbol, binomial, Integer, Rational, factorial
+from gosper import compute_bc, compute_pqr, degree_bound_f, compute_f, gosper_sum
+import pytest
 
 
 def test_compute_bc_poly():
@@ -28,11 +29,15 @@ def test_compute_bc_exp():
 
 def test_compute_bc_binom():
     k = Symbol('k', integer=True)
-    n = Symbol('n', integer=True)
+    n = Symbol('n')
     a = ((-1) ** k) * binomial(n, k)
     b, c = compute_bc(a, k)
     assert b.equals(k - n)
     assert c.equals(k + 1)
+
+
+def test_compute_bc_fact():
+    pass
 
 
 def test_compute_pqr():
@@ -97,3 +102,30 @@ def test_degree_bound_f_case3_z_more():
     r = k ** 2
     d = degree_bound_f(p, q, r, k)
     assert d == 1
+
+
+def test_compute_f():
+    pass
+
+
+def gosper_sum_data():
+    k = Symbol('k', integer=True)
+    n = Symbol('n', integer=True, positive=True)
+    return [
+        (1, k, k + 1),
+        (k, k, (k * (k + 1)) / 2),
+        (k ** 2, k, (k * (k + 1) * (2 * k + 1)) / 6),
+        (k ** 3, k, ((k * (k + 1)) / 2) ** 2),
+        (2 ** k, k, 2 ** (k + 1)),
+        (k * (2 ** k), k, (k - 1) * (2 ** (k + 1))),
+        ((k ** 2) * (2 ** k), k, 2 * (k ** 2 - 2 * k + 3) * (2 ** k)),
+        ((1 / (k + 1)) - (1 / k), k, (1 / (k + 1))),
+        (k * factorial(k), k, factorial(k + 1)),
+        (((-1) ** k) * binomial(n, k), k, -(k * (-1) ** k * binomial(n, k)) / n),
+    ]
+
+
+@pytest.mark.parametrize("a,k,s_exp", gosper_sum_data())
+def test_gosper_sum(a, k, s_exp):
+    s_act = gosper_sum(a, k)
+    assert s_exp.equals(s_act)
