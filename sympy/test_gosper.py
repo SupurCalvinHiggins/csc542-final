@@ -1,4 +1,4 @@
-from sympy import Symbol, binomial, Integer
+from sympy import Symbol, binomial, Integer, Rational
 from gosper import compute_bc, compute_pqr, degree_bound_f
 
 
@@ -66,15 +66,34 @@ def test_degree_bound_f_case_2_z_0():
 def test_degree_bound_f_case_2_z_float():
     k = Symbol('k', integer=True)
     p = k ** 4
-    q = k * (k + 1)
-    r = 2 * (k + 2) * (k + 3)
+    q = k ** 2 + 3 * k
+    r = k ** 2
     d = degree_bound_f(p, q, r, k)
     assert d == 3
 
 
 def test_degree_bound_f_case_2_z_neg():
-    pass
+    k = Symbol('k', integer=True)
+    p = k ** 4
+    q = k ** 2 + 2 * k
+    r = k ** 2
+    d = degree_bound_f(p, q, r, k)
+    assert d == 3
 
 
-def test_degree_bound_f_case_3():
-    pass
+def test_degree_bound_f_case_3_z_less():
+    k = Symbol('k', integer=True)
+    p = k ** 4
+    q = k ** 2 - k
+    r = k ** 2
+    d = degree_bound_f(p, q, r, k)
+    assert d == 3
+
+
+def test_degree_bound_f_case3_z_more():
+    k = Symbol('k', integer=True)
+    p = k
+    q = k ** 2 - Rational(1, 2) * k
+    r = k ** 2
+    d = degree_bound_f(p, q, r, k)
+    assert d == 1

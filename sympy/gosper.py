@@ -45,15 +45,17 @@ def degree_bound_f(p, q, r, k):
     a = x.coeff(k, n)
     b = y.coeff(k, n - 1)
     assert not a.equals(0)
-    print(a, b)
+    print(a, b, n)
 
     z = (-2 * b) / a
     if not z.is_integer or z < 0:
         return degree(p.subs(k, k-1), k) - n + 1
     
+    print(z, degree(p.subs(k, k-1), k) - n + 1)
     return max(z, degree(p.subs(k, k-1), k) - n + 1)
 
 
 def gosper_sum(a, k):
     b, c = compute_bc(a, k)
     p, q, r = compute_pqr(b, c, k)
+    d = degree_bound_f(q, p, r, k)
