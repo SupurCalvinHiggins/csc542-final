@@ -1,5 +1,6 @@
 from sympy import fraction, combsimp, cancel, resultant, roots, Symbol, Dummy
-from sympy import gcd
+from sympy import gcd, degree
+
 
 def compute_bc(a, k):
     x = a.subs(k, k + 1) / a
@@ -11,6 +12,7 @@ def compute_bc(a, k):
 
 
 def compute_pqr(b, c, k):
+    # TODO: precons
     j = Dummy("j")
     rp = resultant(b, c.subs(k, k+j))
     rz = roots(rp, multiple=True, filter="Z")
@@ -24,10 +26,32 @@ def compute_pqr(b, c, k):
         g = gcd(q, r.subs(k, k + z))
         q /= g
         r /= g.subs(k, k - z)
-        for e in range(0, -z, -1):
-            p *= g.subs(k, k + e)
+        for i in range(0, -z, -1):
+            p *= g.subs(k, k + i)
 
+    # TODO: postconditions
     return p, q, r
+
+
+def degree_bound_f(p, q, r, k):
+    x = q + r.subs(k, k-1)
+    y = q - r.subs(k, k-1)
+
+    n = degree(x, k)
+    print(x, y)
+    if n <= degree(y, k):
+        return degree(p.subs(k, k-1), k) - degree(y, k)
+    
+    a = x.coeff(k, n)
+    b = y.coeff(k, n - 1)
+    assert not a.equals(0)
+    print(a, b)
+
+    z = (-2 * b) / a
+    if not z.is_integer or z < 0:
+        return degree(p.subs(k, k-1), k) - n + 1
+    
+    return max(z, degree(p.subs(k, k-1), k) - n + 1)
 
 
 def gosper_sum(a, k):
