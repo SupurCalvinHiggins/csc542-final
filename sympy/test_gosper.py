@@ -50,58 +50,22 @@ def test_compute_pqr():
     assert r.equals(1)
 
 
-def test_degree_bound_f_case_1():
+def degree_bound_f_data():
     k = Symbol('k', integer=True)
-    p = (k + 2) * (k + 3)
-    q = k
-    r = Integer(1)
-    d = degree_bound_f(p, q, r, k)
-    assert d == 1
+    return [
+        ((k + 2) * (k + 3), k, Integer(1), k, 1),
+        (k ** 4, k, k + 1, k, 4),
+        (k ** 4, k ** 2 + 3 * k, k ** 2, k, 3),
+        (k ** 4, k ** 2 + 2 * k, k ** 2, k, 3),
+        (k ** 4, k ** 2 - k, k ** 2, k, 3),
+        (k, k ** 2 - Rational(1, 2) * k, k ** 2, k, 1),
+    ]
 
 
-def test_degree_bound_f_case_2_z_0():
-    k = Symbol('k', integer=True)
-    p = k ** 4
-    q = k
-    r = k + 1
-    d = degree_bound_f(p, q, r, k)
-    assert d == 4
-
-
-def test_degree_bound_f_case_2_z_float():
-    k = Symbol('k', integer=True)
-    p = k ** 4
-    q = k ** 2 + 3 * k
-    r = k ** 2
-    d = degree_bound_f(p, q, r, k)
-    assert d == 3
-
-
-def test_degree_bound_f_case_2_z_neg():
-    k = Symbol('k', integer=True)
-    p = k ** 4
-    q = k ** 2 + 2 * k
-    r = k ** 2
-    d = degree_bound_f(p, q, r, k)
-    assert d == 3
-
-
-def test_degree_bound_f_case_3_z_less():
-    k = Symbol('k', integer=True)
-    p = k ** 4
-    q = k ** 2 - k
-    r = k ** 2
-    d = degree_bound_f(p, q, r, k)
-    assert d == 3
-
-
-def test_degree_bound_f_case3_z_more():
-    k = Symbol('k', integer=True)
-    p = k
-    q = k ** 2 - Rational(1, 2) * k
-    r = k ** 2
-    d = degree_bound_f(p, q, r, k)
-    assert d == 1
+@pytest.mark.parametrize("p,q,r,k,d_exp", degree_bound_f_data())
+def test_degree_bound_f(p, q, r, k, d_exp):
+    d_act = degree_bound_f(p, q, r, k)
+    assert d_exp == d_act
 
 
 def test_compute_f():
@@ -112,7 +76,7 @@ def gosper_sum_data():
     k = Symbol('k', integer=True)
     n = Symbol('n', integer=True, positive=True)
     return [
-        (1, k, k + 1),
+        (Integer(1), k, k),
         (k, k, (k * (k + 1)) / 2),
         (k ** 2, k, (k * (k + 1) * (2 * k + 1)) / 6),
         (k ** 3, k, ((k * (k + 1)) / 2) ** 2),

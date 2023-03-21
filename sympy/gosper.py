@@ -2,25 +2,33 @@ from sympy import fraction, combsimp, cancel, resultant, roots, Symbol, Dummy
 from sympy import gcd, degree, linsolve, simplify
 
 
+DEBUG_MODE = 1
+
+
+def debug(s):
+    if DEBUG_MODE:
+        print(s)
+
+
 def compute_bc(a, k):
-    print(f"called compute_bc(a := {a}, k := {k})")
+    debug(f"called compute_bc(a := {a}, k := {k})")
     x = a.subs(k, k + 1) / a
     x = combsimp(x)
     x = cancel(x)
     b, c = fraction(x)
     # TODO: ensure b, c are polys in k
-    print(f"returned (b := {b}, c := {c}) from compute_bc")
+    debug(f"returned (b := {b}, c := {c}) from compute_bc")
     return b, c
 
 
 def compute_pqr(b, c, k):
     # TODO: precons
-    print(f"called compute_pqr(b := {b}, c := {c}, k := {k})")
+    debug(f"called compute_pqr(b := {b}, c := {c}, k := {k})")
     j = Dummy("j")
-    rp = resultant(b, c.subs(k, k+j))
-    print(f"resultant is {rp}")
+    rp = resultant(b, c.subs(k, k+j), k)
+    debug(f"resultant is {rp}")
     rz = roots(rp, j, multiple=True)
-    print(f"resultant roots are {rz}")
+    debug(f"resultant roots are {rz}")
 
     p = 1
     q = b
@@ -38,18 +46,18 @@ def compute_pqr(b, c, k):
     p = cancel(p)
     q = cancel(q)
     r = cancel(r)
-    print(f"returned (p := {p}, q := {q}, r := {r}) from compute_pqr")
+    debug(f"returned (p := {p}, q := {q}, r := {r}) from compute_pqr")
     return p, q, r
 
 
 def degree_bound_f(p, q, r, k):
-    print(f"called degree_bound_f(p := {p}, q := {q}, r := {r}, k := {k})")
+    debug(f"called degree_bound_f(p := {p}, q := {q}, r := {r}, k := {k})")
     x = q + r.subs(k, k-1)
     y = q - r.subs(k, k-1)
     n = degree(x, k)
     if n <= degree(y, k):
         d = degree(p.subs(k, k-1), k) - degree(y, k)
-        print(f"returned d := {d} from degree_bound_f case 1")
+        debug(f"returned d := {d} from degree_bound_f case 1")
         return d
 
     a = x.coeff(k, n)
@@ -60,16 +68,16 @@ def degree_bound_f(p, q, r, k):
     # TODO: needs to check for int literal, not just integer
     if not z.is_integer or z < 0:
         d = degree(p.subs(k, k-1), k) - n + 1
-        print(f"returned d := {d} from degree_bound_f case 2")
+        debug(f"returned d := {d} from degree_bound_f case 2")
         return d
     
     d = max(z, degree(p.subs(k, k-1), k) - n + 1)
-    print(f"returned d := {d} from degree_bound_f case 3")
+    debug(f"returned d := {d} from degree_bound_f case 3")
     return d
 
 
 def compute_f(p, q, r, d, k):
-    print(f"called compute_f(p := {p}, q := {q}, r := {r}, d := {d}, k := {k})")
+    debug(f"called compute_f(p := {p}, q := {q}, r := {r}, d := {d}, k := {k})")
     f = 0
     cs = []
     for i in range(0, d + 1):
@@ -83,10 +91,10 @@ def compute_f(p, q, r, d, k):
     for i in range(0, 2 * (d + 1)): # TODO: idk why we need * 2
         es.append(e.subs(k, i))
     
-    print(f"built system of equations es := {es}")
+    debug(f"built system of equations es := {es}")
     
     ss = linsolve(es, cs)
-    print(f"found solution set ss := {ss}")
+    debug(f"found solution set ss := {ss}")
 
     if len(ss) != 1:
         raise ValueError()
@@ -94,15 +102,15 @@ def compute_f(p, q, r, d, k):
     s = next(iter(ss))
     f = f.subs(list(zip(cs, s)))
     f = f.subs(list(zip(cs, [0] * len(cs))))
-    print(f"returned f := {f} from compute_f")
+    debug(f"returned f := {f} from compute_f")
     return f
 
 
 def compute_s(a, p, r, f, k):
-    print(f"called compute_s(a := {a}, p := {p}, r := {r}, f := {f}, k := {k})")
+    debug(f"called compute_s(a := {a}, p := {p}, r := {r}, f := {f}, k := {k})")
     s = (r.subs(k, k-1) / p.subs(k, k-1)) * f.subs(k, k-1) * a
     s = cancel(s.subs(k, k+1))
-    print(f"returned s := {s} from compute_s")
+    debug(f"returned s := {s} from compute_s")
     return s
 
 
@@ -120,8 +128,8 @@ def gosper_sum(a, k):
 # from sympy import Integer, binomial, factorial
 # k = Symbol('k', integer=True)
 # n = Symbol('n')
-# print(type(n.is_integer))
+# # debug(type(n.is_integer))
 # # a = (2 ** k) * (k ** 8) * (3 ** k)
 # a = k * (2 ** k)
 # # a = ((-1) ** k) * binomial(n, k)
-# print(gosper_sum(a, k))
+# debug(gosper_sum(a, k))
