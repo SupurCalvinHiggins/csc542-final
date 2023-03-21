@@ -27,7 +27,7 @@ def compute_pqr(b, c, k):
     j = Dummy("j")
     rp = resultant(b, c.subs(k, k+j), k)
     debug(f"resultant is {rp}")
-    rz = roots(rp, j, multiple=True)
+    rz = roots(rp, j, multiple=True, filter='Z')
     debug(f"resultant roots are {rz}")
 
     p = 1
@@ -65,8 +65,9 @@ def degree_bound_f(p, q, r, k):
     assert not a.equals(0)
 
     z = (-2 * b) / a
+    debug(f"found z := {z}")
     # TODO: needs to check for int literal, not just integer
-    if not z.is_integer or z < 0:
+    if not z.is_integer or z < 0 or z.free_symbols:
         d = degree(p.subs(k, k-1), k) - n + 1
         debug(f"returned d := {d} from degree_bound_f case 2")
         return d
@@ -109,7 +110,8 @@ def compute_f(p, q, r, d, k):
 def compute_s(a, p, r, f, k):
     debug(f"called compute_s(a := {a}, p := {p}, r := {r}, f := {f}, k := {k})")
     s = (r.subs(k, k-1) / p.subs(k, k-1)) * f.subs(k, k-1) * a
-    s = cancel(s.subs(k, k+1))
+    debug(s)
+    # s = cancel(s.subs(k, k+1))
     debug(f"returned s := {s} from compute_s")
     return s
 
@@ -124,12 +126,3 @@ def gosper_sum(a, k):
     s = compute_s(a, p, r, f, k)
     # NOTE: s is indefinite (s - s.subs(k, 0) is the real answer)
     return s
-
-# from sympy import Integer, binomial, factorial
-# k = Symbol('k', integer=True)
-# n = Symbol('n')
-# # debug(type(n.is_integer))
-# # a = (2 ** k) * (k ** 8) * (3 ** k)
-# a = k * (2 ** k)
-# # a = ((-1) ** k) * binomial(n, k)
-# debug(gosper_sum(a, k))

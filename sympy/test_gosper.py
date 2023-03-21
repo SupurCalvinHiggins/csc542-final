@@ -76,16 +76,18 @@ def gosper_sum_data():
     k = Symbol('k', integer=True)
     n = Symbol('n', integer=True, positive=True)
     return [
-        (Integer(1), k, k),
-        (k, k, (k * (k + 1)) / 2),
-        (k ** 2, k, (k * (k + 1) * (2 * k + 1)) / 6),
-        (k ** 3, k, ((k * (k + 1)) / 2) ** 2),
-        (2 ** k, k, 2 ** (k + 1)),
-        (k * (2 ** k), k, (k - 1) * (2 ** (k + 1))),
-        ((k ** 2) * (2 ** k), k, 2 * (k ** 2 - 2 * k + 3) * (2 ** k)),
-        ((1 / (k + 1)) - (1 / k), k, (1 / (k + 1))),
-        (k * factorial(k), k, factorial(k + 1)),
+        (Integer(1), k, k - 1),
+        (k, k, (k * (k - 1)) / 2),
+        (k ** 2, k, ((k - 1) * k * (2 * k - 1)) / 6),
+        (k ** 3, k, ((k * (k - 1)) / 2) ** 2),
+        (k ** 2 + 3 * k + 1, k, (k-1) * (k + 3) * (k + 1) / 3),
+        (2 ** k, k, 2 ** k),
+        (k * (2 ** k), k, (k - 2) * (2 ** k)),
+        ((k ** 2) * (2 ** k), k, (k ** 2 - 4 * k + 6) * (2 ** k)),
+        ((1 / (k + 1)) - (1 / k), k, (1 / k)),
+        (k * factorial(k), k, factorial(k)),
         (((-1) ** k) * binomial(n, k), k, -(k * (-1) ** k * binomial(n, k)) / n),
+        (binomial(k, n), k, (k - n) * binomial(k, n) / (n + 1)),
     ]
 
 
