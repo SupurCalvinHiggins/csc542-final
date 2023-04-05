@@ -26,7 +26,7 @@ in the root directory of the project.
 
 Gosper, R. William Jr. "Decision Procedure for Indefinite Hypergeometric Summation." (1977).
 
-Graham, R. L., Knuth, D. E.,, Patashnik, O. "Concrete Mathematics: A Foundation for Computer Science." (1989).
+Graham, R. L., Knuth, D. E., Patashnik, O. "Concrete Mathematics: A Foundation for Computer Science." (1989).
 
 Hayden, Michael B. and Lamanga, Edmund A. "Gosper's Summation Algorithm and Some Applications." (1988).
 
