@@ -1,6 +1,14 @@
-from sympy import fraction, combsimp, cancel, resultant, roots, Symbol, Dummy
-from sympy import gcd, degree, linsolve, simplify
-
+from sympy import (
+    cancel, 
+    combsimp, 
+    degree,
+    fraction, 
+    gcd,
+    linsolve,
+    resultant, 
+    roots, 
+    Dummy,
+)
 
 DEBUG_MODE = 1
 
