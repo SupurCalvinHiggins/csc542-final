@@ -10,7 +10,7 @@ from sympy import (
     Dummy,
 )
 
-DEBUG_MODE = 1
+DEBUG_MODE = 0
 
 
 def debug(s: str) -> None:
