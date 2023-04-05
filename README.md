@@ -13,14 +13,23 @@ The Maple implementation is currently broken.
 
 The Maple implementation requries Maple 2022. It might work on other Maple versions but this is untested.
 
-
-
 ### Python
 The Python implementation requires Python 3.9.6, Sympy 1.11.1 and any compatible version of pytest. It might work on other versions but this is untested. To run the test suite, execute
 ```
 pytest .
 ```
 in the root directory of the project.
+
+## Execution
+
+### Maple
+
+**Note:**
+The Maple implementation is currently broken.
+
+### Python
+
+The `sympy` folder contains a sample `main.py` file for playing with Gosper's algorithm. 
 
 ## References
 
