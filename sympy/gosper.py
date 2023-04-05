@@ -10,6 +10,7 @@ from sympy import (
     Dummy,
 )
 
+
 DEBUG_MODE = 0
 
 
