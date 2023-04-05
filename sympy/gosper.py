@@ -30,6 +30,8 @@ def compute_bc(a, k):
     Computes polynomials $b_k$ and $c_k$ such that $a_{k+1} / a_k = b_k / c_k$. If no
     such polynomials can be found, then $b_k = a_{k+1} / a_k$ and $c_k = 1$.
 
+    This implementation is based on "Summation in Maple" by Wolfram Koepf.
+
     Parameters
     ----------
         a: The summand $a_k$.
@@ -55,6 +57,8 @@ def compute_pqr(b, c, k):
     Computes polynomials $p_{k+1}, q_{k+1}$ and $r_{k+1}$ such that $b_k / c_k = 
     (p_{k+1} / p_k) * (q_{k+1} * r_{k+1})$ and $\\mathrm{gcd}(q_k, r_{k+j}) = 1$ for all
     integers $j \\geq 0$.
+
+    This implementation is based on "Summation in Maple" by Wolfram Koepf.
 
     Parameters
     ----------
@@ -99,6 +103,9 @@ def degree_bound_f(p, q, r, k):
     """
     Computes an upper bound for the degree of $f_k$.
 
+    This implementation is based on "Gosper's Summation Algorithm and Some 
+    Applications" by Michael B. Hayden and Edmund A. Lamagna.
+
     Parameters
     ----------
         p: The polynomial $p_{k+1}$.
@@ -140,6 +147,8 @@ def compute_f(p, q, r, d, k):
     """
     Computes the polynomial $f_k$ such that $p_k = q_{k+1} f_k - r_k f_{k-1}$. If $f_k$
     cannot be found, a ValueError will be raised.
+
+    This implementation is based on "Summation in Maple" by Wolfram Koepf.
 
     Parameters
     ----------
@@ -186,6 +195,8 @@ def compute_s(a, p, r, f, k):
     """
     Computes the indefinite sum $s_k$.
 
+    This implementation is based on "Summation in Maple" by Wolfram Koepf.
+
     Parameters
     ----------
         a: The summand $a_k$.
@@ -208,6 +219,10 @@ def gosper_sum(a, k):
     """
     Computes the indefinite sum of $a_k$ with Gosper's algorithm. If the summand is not
     Gosper summable, a ValueError will be raised.
+
+    This implementation is based on "Summation in Maple" by Wolfram Koepf and "Gosper's 
+    Summation Algorithm and Some Applications" by Michael B. Hayden and Edmund A. 
+    Lamagna.
 
     Parameters
     ----------
