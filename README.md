@@ -9,7 +9,7 @@ This project contains a Maple implementation and a Python implementation of Gosp
 ### Maple
 The Maple implementation requries Maple 2022. It might work on other Maple versions but this is untested.
 
-**Note**
+**Note:**
 The Maple implementation is currently broken.
 
 ### Python
