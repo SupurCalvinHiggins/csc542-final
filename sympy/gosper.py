@@ -8,6 +8,7 @@ from sympy import (
     resultant, 
     roots, 
     Dummy,
+    simplify,
 )
 
 
@@ -241,4 +242,4 @@ def gosper_sum(a, k):
         raise ValueError("Summand is not Gosper summable.")
     f = compute_f(p, q, r, d, k)
     s = compute_s(a, p, r, f, k)
-    return s
+    return simplify(s)
