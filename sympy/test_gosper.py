@@ -36,10 +36,6 @@ def test_compute_bc_binom():
     assert c.equals(k + 1)
 
 
-def test_compute_bc_fact():
-    pass
-
-
 def test_compute_pqr():
     k = Symbol('k', integer=True)
     b = k * (k + 3)
@@ -66,10 +62,6 @@ def degree_bound_f_data():
 def test_degree_bound_f(p, q, r, k, d_exp):
     d_act = degree_bound_f(p, q, r, k)
     assert d_exp == d_act
-
-
-def test_compute_f():
-    pass
 
 
 def gosper_sum_data():

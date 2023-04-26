@@ -45,10 +45,17 @@ def compute_bc(a, k):
         non-polynomial and $c_k$ will be $1$.
     """
     debug(f"called compute_bc(a := {a}, k := {k})")
+    
+    # Compute the ratio between terms.
     x = a.subs(k, k + 1) / a
+    
+    # Simplify the ratio.
     x = combsimp(x)
     x = cancel(x)
+
+    # Extract the numerator and denominator.
     b, c = fraction(x)
+
     # TODO: Ensure that b and c are polynomials in k.
     debug(f"returned (b := {b}, c := {c}) from compute_bc")
     return b, c
@@ -74,16 +81,22 @@ def compute_pqr(b, c, k):
     """
     # TODO: Ensure that b and c are polynomials in k.
     debug(f"called compute_pqr(b := {b}, c := {c}, k := {k})")
+
+    # Compute the resultant polynomial.
     j = Dummy("j")
     rp = resultant(b, c.subs(k, k+j), k)
     debug(f"resultant is {rp}")
+
+    # Find the roots of the resultant.
     rz = roots(rp, j, multiple=True, filter='Z')
     debug(f"resultant roots are {rz}")
 
+    # Initial values for p, q and r.
     p = 1
     q = b
     r = c
 
+    # Update p, q and r based on the resultant roots.
     for z in rz:
         if z.is_negative: continue
         g = gcd(q, r.subs(k, k + z))
@@ -92,6 +105,7 @@ def compute_pqr(b, c, k):
         for i in range(0, -z, -1):
             p *= g.subs(k, k + i)
 
+    # Reduce p, q and r. They should be polynomial.
     p = cancel(p)
     q = cancel(q)
     r = cancel(r)
@@ -121,25 +135,33 @@ def degree_bound_f(p, q, r, k):
         $0$ and negative if $f_k$ cannot be computed by Gosper's algorithm.
     """
     debug(f"called degree_bound_f(p := {p}, q := {q}, r := {r}, k := {k})")
+
+    # Set up locals.
     x = q + r.subs(k, k-1)
     y = q - r.subs(k, k-1)
+
+    # Check case 1 of the degree bound.
     n = degree(x, k)
     if n <= degree(y, k):
         d = degree(p.subs(k, k-1), k) - degree(y, k)
         debug(f"returned d := {d} from degree_bound_f case 1")
         return d
 
+    # Set up locals.
     a = x.coeff(k, n)
     b = y.coeff(k, n - 1)
     assert not a.equals(0)
 
     z = (-2 * b) / a
     debug(f"found z := {z}")
+
+    # Check case 2 of the degree bound.
     if not z.is_integer or z < 0 or z.free_symbols:
         d = degree(p.subs(k, k-1), k) - n + 1
         debug(f"returned d := {d} from degree_bound_f case 2")
         return d
     
+    # Otherwise, default to case 3.
     d = max(z, degree(p.subs(k, k-1), k) - n + 1)
     debug(f"returned d := {d} from degree_bound_f case 3")
     return d
@@ -165,6 +187,8 @@ def compute_f(p, q, r, d, k):
         The polynomial $f_k$. 
     """
     debug(f"called compute_f(p := {p}, q := {q}, r := {r}, d := {d}, k := {k})")
+
+    # Set up dummy equation.
     f = 0
     cs = []
     for i in range(0, d + 1):
@@ -172,23 +196,28 @@ def compute_f(p, q, r, d, k):
         f += c * (k ** i)
         cs.append(c)
     
+    # Generate system of equations.
     e = q * f - r.subs(k, k-1) * f.subs(k, k-1) - p.subs(k, k-1)
-
     es = []
     for i in range(0, 2 * (d + 1)): # TODO: We shouldn't need to multiply by 2.
         es.append(e.subs(k, i))
-    
     debug(f"built system of equations es := {es}")
     
+    # Solve the system.
     ss = linsolve(es, cs)
     debug(f"found solution set ss := {ss}")
 
+    # If there is no solution, the summand is not Gosper summable.
     if len(ss) != 1:
         raise ValueError("Summand is not Gosper summable.")
 
+    # Otherwise, substitute the solutions.
     s = next(iter(ss))
     f = f.subs(list(zip(cs, s)))
+
+    # Choose free variables to be 0.
     f = f.subs(list(zip(cs, [0] * len(cs))))
+
     debug(f"returned f := {f} from compute_f")
     return f
 
